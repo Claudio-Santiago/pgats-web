@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Teste Unitatios
         run: echo "Executando testes unitatios"
-  
+
   # Descrição do job
   e2e-tests:
     # Maquina que o job vai executar

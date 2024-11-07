@@ -17,7 +17,6 @@ describe('Automation Exercise', () => {
     cy.visit('https://automationexercise.com');
   });
 
-  
   it('Test Case 1: Cadastrar um usuário', () => {
     menu.irParaLoginCadastro().preencherFormulario();
 

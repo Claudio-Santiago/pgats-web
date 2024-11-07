@@ -1,0 +1,68 @@
+# CI de Nivel 01 - Disparo manual a partir de 1 click
+
+#nome do pipeline
+name: 'Execução Manual'
+
+# Triggres ou gatilhos de execução
+#Getilho de exec manual = workflow_dispatch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inspection:
+    runs-on:
+      - ubuntu-latest
+
+    # passo a passo das acoes do job
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalando dependencias
+        run: npm install
+
+      - name: Padronizacão de codigo (Lint)
+        run: npm run lint
+
+  unit:
+    runs-on:
+      - ubuntu-latest
+
+    needs: [inspection]
+
+    # passo a passo das acoes do job
+    steps:
+      - name: Teste Unitatios
+        run: echo "Executando testes unitatios"
+  
+  # Descrição do job
+  e2e-tests:
+    # Maquina que o job vai executar
+    runs-on:
+      - ubuntu-latest
+
+    needs: [unit]
+
+    # passo a passo das acoes do job
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalando dependencias
+        run: npm install
+
+      - name: Testes E2E
+        run: npx cypress run
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: relatorio-de-testes
+          path: ./cypress/reports
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [e2e-tests]
+
+    steps:
+      - name: Deploy
+        run: echo "Executando Deploy"
